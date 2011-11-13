@@ -17,7 +17,7 @@ FirefoxProfilesButton.prototype = {
 
         let icon = new St.Icon({ icon_name: 'firefox',
                                  icon_type: St.IconType.FULLCOLOR,
-                                 icon_size: Main.panel.button.height});
+                                 icon_size: 17});
 
         icon.reactive = true;
         icon.connect('button-press-event', Lang.bind(this, function () {
@@ -35,4 +35,26 @@ FirefoxProfilesButton.prototype = {
 
 function main() {
     new FirefoxProfilesButton();
+}
+function init(extensionMeta) {
+    // do nothing here
+}
+
+function enable() {
+    let role = 'firefox-profiles-button';
+
+    if(Main.panel._status_area_order.indexOf(role) == -1) {
+        Main.panel._status_area_order.unshift(role);
+        Main.panel._status_area_shell_implementation[role] = FirefoxProfilesButton;
+    
+        let constructor = Main.panel._status_area_shell_implementation[role];
+        let indicator = new constructor();
+        Main.panel.addToStatusArea(role, indicator, 0);
+    } else {
+        Main.panel._statusArea['firefox-profiles-button'].actor.show();
+    }
+}
+
+function disable() {
+    Main.panel._statusArea['firefox-profiles-button'].actor.hide();
 }
