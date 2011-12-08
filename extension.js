@@ -3,17 +3,20 @@ const St = imports.gi.St;
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const Util = imports.misc.util;
+//gnome 3.0
+const Panel = imports.ui.panel;
 
-function FirefoxProfilesButton() {
+function FirefoxProfiles() {
     this._init();
 }
 
-FirefoxProfilesButton.prototype = {
-    _button: null,
+FirefoxProfiles.prototype = {
+__proto__: PanelMenu.SystemStatusButton.prototype,
 
     _init: function() {
 
-        this._button = new St.BoxLayout({ name: 'firefox-profiles-button'});
+    PanelMenu.SystemStatusButton.prototype._init.call(this,'firefox-profiles');
+        this._button = new St.BoxLayout({ name: 'firefox-profiles'});
 
         let icon = new St.Icon({ icon_name: 'firefox',
                                  icon_type: St.IconType.FULLCOLOR,
@@ -33,28 +36,24 @@ FirefoxProfilesButton.prototype = {
     },
 };
 
-function main() {
-    new FirefoxProfilesButton();
-}
 function init(extensionMeta) {
-    // do nothing here
+    //do nothing
 }
+
+//gnome3.0
+function main() {
+    Panel.STANDARD_TRAY_ICON_ORDER.unshift('firefox-profiles');
+    Panel.STANDARD_TRAY_ICON_SHELL_IMPLEMENTATION['firefox-profiles'] = FirefoxProfiles;
+}
+
+let indicator;
 
 function enable() {
-    let role = 'firefox-profiles-button';
-
-    if(Main.panel._status_area_order.indexOf(role) == -1) {
-        Main.panel._status_area_order.unshift(role);
-        Main.panel._status_area_shell_implementation[role] = FirefoxProfilesButton;
-    
-        let constructor = Main.panel._status_area_shell_implementation[role];
-        let indicator = new constructor();
-        Main.panel.addToStatusArea(role, indicator, 0);
-    } else {
-        Main.panel._statusArea['firefox-profiles-button'].actor.show();
-    }
+    indicator = new FirefoxProfiles();
+    Main.panel.addToStatusArea('firefox-profiles', indicator);
 }
 
 function disable() {
-    Main.panel._statusArea['firefox-profiles-button'].actor.hide();
+    indicator.destroy();
+    indicator = null;
 }
