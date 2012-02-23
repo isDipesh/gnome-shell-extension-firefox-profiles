@@ -3,57 +3,44 @@ const St = imports.gi.St;
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const Util = imports.misc.util;
-//gnome 3.0
-const Panel = imports.ui.panel;
+const GLib = imports.gi.GLib;
 
 function FirefoxProfiles() {
     this._init();
 }
 
 FirefoxProfiles.prototype = {
-__proto__: PanelMenu.SystemStatusButton.prototype,
+    __proto__: PanelMenu.SystemStatusButton.prototype,
 
     _init: function() {
-
-    PanelMenu.SystemStatusButton.prototype._init.call(this,'firefox-profiles');
-        this._button = new St.BoxLayout({ name: 'firefox-profiles'});
-
-        let icon = new St.Icon({ icon_name: 'firefox',
-                                 icon_type: St.IconType.FULLCOLOR,
-                                 icon_size: 17});
-
-        icon.reactive = true;
-        icon.connect('button-press-event', Lang.bind(this, function () {
-              Util.spawn(['firefox','-no-remote','-profilemanager']);
-            return true;
+        PanelMenu.SystemStatusButton.prototype._init.call(this, 'start-here');
+        this._button = new St.Button();
+        this._button.set_tooltip_text('Click me to choose a Firefox Profile!');
+        this._button.set_child(new St.Icon({
+            icon_name: 'firefox',
+            icon_type: St.IconType.FULLCOLOR,
+            icon_size: 17
         }));
-
-        this._button.add_actor(icon);
-        this._button.set_tooltip_text('Firefox Profiles Chooser');
-
-        let _children = Main.panel._leftBox.get_children();
-        Main.panel._leftBox.insert_actor(this._button, _children.length - 1);
-    },
+        this._button.connect('clicked', Lang.bind(this, function () {
+            Util.spawn(['firefox','-no-remote','-profilemanager']);
+        }));
+    }
 };
 
-function init(extensionMeta) {
-    //do nothing
-}
-
-//gnome3.0
-function main() {
-    Panel.STANDARD_TRAY_ICON_ORDER.unshift('firefox-profiles');
-    Panel.STANDARD_TRAY_ICON_SHELL_IMPLEMENTATION['firefox-profiles'] = FirefoxProfiles;
-}
-
-let indicator;
+let firefoxProfiles;
 
 function enable() {
-    indicator = new FirefoxProfiles();
-    Main.panel.addToStatusArea('firefox-profiles', indicator);
+    firefoxProfiles = new FirefoxProfiles();
+    let _children = Main.panel._leftBox.get_children();
+    Main.panel._leftBox.insert_actor(firefoxProfiles._button, _children.length - 1);
 }
 
 function disable() {
-    indicator.destroy();
-    indicator = null;
+    Main.panel._leftBox.remove_actor(firefoxProfiles._button);
+    firefoxProfiles.destroy();
 }
+
+function init() {
+    // do nothing
+}
+
