@@ -1,1 +1,7 @@
-{"shell-version": ["3.2"], "uuid": "firefox-profiles@xtranophilist", "name": "Firefox Profiles Manager", "description": "Allows user to manage and choose among different user profiles for Mozilla Firefox", "url": "http://motorscript.com/gnome-shell-extension-firefox-profiles/"}
+{
+    "shell-version": ["3.4"],
+    "uuid": "firefox-profiles@xtranophilist",
+    "name": "Firefox Profiles Manager",
+    "description": "Allows user to manage and choose among different user profiles for Mozilla Firefox",
+    "url": "http://motorscript.com/gnome-shell-extension-firefox-profiles/"
+}
